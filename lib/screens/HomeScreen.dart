@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'Home.dart';
 import 'Jobs.dart';
 import 'Notifications.dart';
-import 'Signin.dart';
-import 'Signup.dart';
 import 'Post.dart';
 import 'Profile.dart';
 
