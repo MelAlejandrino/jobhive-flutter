@@ -37,6 +37,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: Column(
         children: [
           // Row containing "Saved jobs" and "Post a job" buttons
@@ -98,7 +99,7 @@ class _HomeState extends State<Home> {
           ),
           // Recommended
           const Padding(
-            padding: EdgeInsets.all(25.0),
+            padding: EdgeInsets.fromLTRB(25.0, 25.0, 25.0 , 0.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -132,30 +133,28 @@ class _HomeState extends State<Home> {
                             job.position,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Container(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    job.company,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  job.company,
+                                  style: TextStyle(color: Colors.grey[600]), // Lighter text color
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5.0),
+                                  child: Text(
+                                    job.location,
                                     style: TextStyle(color: Colors.grey[600]), // Lighter text color
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5.0),
-                                    child: Text(
-                                      job.location,
-                                      style: TextStyle(color: Colors.grey[600]), // Lighter text color
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    job.datePosted,
-                                    style: TextStyle(color: Colors.grey[600]), // Lighter text color
-                                  ),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  job.datePosted,
+                                  style: TextStyle(color: Colors.grey[600]), // Lighter text color
+                                ),
+                              ],
                             ),
                           ),
                         ],
