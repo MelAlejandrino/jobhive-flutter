@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jobhive/component/SearchBar.dart' as custom_search;
 
 class Jobs extends StatefulWidget {
   const Jobs({Key? key}) : super(key: key);
@@ -35,6 +36,7 @@ class _JobsState extends State<Jobs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: custom_search.SearchBar() as PreferredSizeWidget?,
       body: Column(
         children: [
           Row(
