@@ -37,9 +37,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Job Listings'),
-      ),
       body: Column(
         children: [
           // Row containing "Saved jobs" and "Post a job" buttons
