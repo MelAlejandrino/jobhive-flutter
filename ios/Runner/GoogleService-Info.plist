@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAHWo1BzKjj1zwm-uri74gqCbu_qUPkmNc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>199863771879</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.jobhive</string>
+	<key>PROJECT_ID</key>
+	<string>jobhive-b9ff8</string>
+	<key>STORAGE_BUCKET</key>
+	<string>jobhive-b9ff8.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:199863771879:ios:0534deb8c88afda5c4b842</string>
+	<key>DATABASE_URL</key>
+	<string>https://jobhive-b9ff8-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
