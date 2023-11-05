@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/page-1/new-user-photo.dart';
-import 'package:myapp/utilityforsignup.dart';
+import 'package:jobhive/screens/utilityforsignup.dart';
 
 
 
