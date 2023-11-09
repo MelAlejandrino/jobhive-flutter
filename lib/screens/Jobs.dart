@@ -36,7 +36,7 @@ class _JobsState extends State<Jobs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: custom_search.SearchBar() as PreferredSizeWidget?,
+      appBar: const custom_search.SearchBar(),
       body: Column(
         children: [
           Row(

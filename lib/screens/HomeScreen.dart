@@ -4,6 +4,7 @@ import 'Jobs.dart';
 import 'Notifications.dart';
 import 'Post.dart';
 import 'Profile.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,11 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    Home(),
-    Notifications(),
-    Post(),
-    Jobs(),
-    Profile(),
+    const Home(),
+    const Notifications(),
+    PostStatusPage(),
+    const Jobs(),
+    const Profile(),
   ];
 
   @override
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: _screens,
         ),
         bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Color.fromARGB(255, 218, 196, 0),
+          selectedItemColor: const Color.fromARGB(255, 218, 196, 0),
           unselectedItemColor: Colors.black.withOpacity(0.60),
           currentIndex: _currentIndex,
           onTap: (index) {
@@ -41,13 +42,30 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.notifications), label: 'Notifications'),
+                icon: PhosphorIcon(
+                  PhosphorIcons.house(),
+                  size: 36.0,
+                ),
+                label: 'Home'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.add_circle), label: 'Post'),
-            BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Jobs'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+                icon: PhosphorIcon(
+                  PhosphorIcons.bell(),
+                  size: 36.0,
+                ), label: 'Notifications'),
+            BottomNavigationBarItem(
+                icon: PhosphorIcon(
+                  PhosphorIcons.plusCircle(),
+                  size: 36.0,
+                ), label: 'Post'),
+            BottomNavigationBarItem(icon: PhosphorIcon(
+                  PhosphorIcons.briefcase(),
+                  size: 36.0,
+                ), label: 'Jobs'),
+            BottomNavigationBarItem(icon: PhosphorIcon(
+                  PhosphorIcons.house(),
+                  size: 36.0,
+                ), label: 'Profile'),
           ],
         ),
       ),
