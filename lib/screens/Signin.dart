@@ -5,7 +5,6 @@ import '../provider/auth_provider.dart';
 import 'package:jobhive/screens/Signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
-import 'dart:typed_data';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key});

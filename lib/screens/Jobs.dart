@@ -31,6 +31,27 @@ class _JobsState extends State<Jobs> {
       location: 'Cagayan de Oro City, Philippines',
       datePosted: '2w',
     ),
+    JobListing(
+      logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/7/71/DBP_company_logo.svg/1200px-DBP_company_logo.svg.png',
+      position: 'Software Engineer',
+      company: 'DBP',
+      location: 'Tacloban City, Philippines',
+      datePosted: '3w',
+    ),
+    JobListing(
+      logo: 'https://media.licdn.com/dms/image/C560BAQFypzs4i3rNJg/company-logo_200_200/0/1673849369342/syntactics_inc_logo?e=2147483647&v=beta&t=fJ46M1ma-jFws8lEaBt1SoH6BwgffAjSuSMSa8GotSc',
+      position: 'Web Developer',
+      company: 'Syntactics Philippines',
+      location: 'Cagayan de Oro City, Philippines',
+      datePosted: '2w',
+    ),
+    JobListing(
+      logo: 'https://www.pmi.com/resources/images/default-source/newsroom-image/vertical_lblue2.jpg?sfvrsn=5f4190b5_6',
+      position: 'Computer Technician',
+      company: 'Philip Morris International',
+      location: 'Philippines',
+      datePosted: '2w',
+    ),
   ];
 
   @override
@@ -96,7 +117,7 @@ class _JobsState extends State<Jobs> {
             ],
           ),
           const Padding(
-            padding: EdgeInsets.fromLTRB(25.0, 25.0, 25.0 , 0.0),
+            padding: EdgeInsets.all(25.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
