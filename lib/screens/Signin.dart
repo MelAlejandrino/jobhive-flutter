@@ -96,6 +96,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
+                    backgroundColor: Colors.black,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
