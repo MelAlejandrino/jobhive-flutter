@@ -3,6 +3,10 @@ import 'package:jobhive/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jobhive/repository/post_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class PostStatusPage extends StatefulWidget {
   const PostStatusPage({super.key});
@@ -12,14 +16,49 @@ class PostStatusPage extends StatefulWidget {
 }
 
 class _PostStatusPageState extends State<PostStatusPage> {
-  TextEditingController statusController = TextEditingController();
-  String? selectedPrivacyStatus = 'Public';
-  Uint8List? userImage;
-
   @override
   void initState() {
     super.initState();
     _loadImage();
+  }
+
+  void dispose() {
+    statusController.dispose();
+    super.dispose();
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final PostRepository firestorePost = PostRepository();
+
+  TextEditingController statusController = TextEditingController();
+  String? selectedPrivacyStatus = 'Public';
+  Uint8List? userImage;
+
+  Future<void> _addPost(BuildContext context) async {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+    try {
+      if (statusController.text.isNotEmpty) {
+        String userUid = authProvider.user!.uid;
+        String user_name =
+            authProvider.user!.firstName + " " + authProvider.user!.lastName;
+        String user_photo = authProvider.user!.imageLink;
+        String caption = statusController.text.trim();
+        String postUid =
+            FirebaseFirestore.instance.collection('posts').doc().id;
+        await firestorePost.addPost(
+          userUid,
+          caption,
+          postUid,
+          user_name,
+          user_photo,
+          selectedPrivacyStatus ?? 'defaultPrivacy',
+        );
+        statusController.clear();
+      }
+    } catch (e) {
+      print('Error during registration: ${e.toString()}');
+    }
   }
 
   Future<void> _loadImage() async {
@@ -43,24 +82,12 @@ class _PostStatusPageState extends State<PostStatusPage> {
     }
   }
 
-  void _postStatus() {
-    String status = statusController.text;
-    statusController.clear();
-  }
-
-  void _handleImageClick() {}
-
-  void _handleNoteClick() {}
-
-  void _handleLeaderboardClick() {}
-
-  void _handleMoreClick() {}
-
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
 
-    String userName = authProvider.user!.firstName + " " + authProvider.user!.lastName;
+    String userName =
+        authProvider.user!.firstName + " " + authProvider.user!.lastName;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -77,7 +104,9 @@ class _PostStatusPageState extends State<PostStatusPage> {
                 padding:
                     const EdgeInsets.only(right: 8.0), // Add right padding here
                 child: ElevatedButton(
-                  onPressed: _postStatus,
+                  onPressed: () {
+                    _addPost(context);
+                  },
                   child: Text('Post',
                       style: TextStyle(
                           fontSize: 16.0,
@@ -96,7 +125,8 @@ class _PostStatusPageState extends State<PostStatusPage> {
           ),
         ],
       ),
-      body: Padding(
+      
+      body: SingleChildScrollView(child:Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
@@ -123,7 +153,7 @@ class _PostStatusPageState extends State<PostStatusPage> {
                                   'assets/jobhive.png',
                                   width: 48.0,
                                   height: 48.0,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                 ),
                         ),
                         SizedBox(width: 8.0),
@@ -184,27 +214,30 @@ class _PostStatusPageState extends State<PostStatusPage> {
                       controller: statusController,
                       decoration:
                           InputDecoration(labelText: "Start typing ..."),
+                      maxLines: null,
+                      keyboardType: TextInputType
+                          .multiline,
                     ),
                     SizedBox(height: 16.0),
                     Row(
                       children: <Widget>[
                         InkWell(
-                          onTap: _handleImageClick,
+                          onTap: () {},
                           child: Icon(Icons.image), // Icon 1
                         ),
                         SizedBox(width: 16.0), // Spacing
                         InkWell(
-                          onTap: _handleNoteClick,
+                          onTap: () {},
                           child: Icon(Icons.calendar_month), // Icon 2
                         ),
                         SizedBox(width: 16.0), // Spacing
                         InkWell(
-                          onTap: _handleLeaderboardClick,
+                          onTap: () {},
                           child: Icon(Icons.leaderboard_rounded), // Icon 3
                         ),
                         SizedBox(width: 16.0), // Spacing
                         InkWell(
-                          onTap: _handleMoreClick,
+                          onTap: () {},
                           child: Icon(Icons.more_horiz), // Icon 4
                         ),
                       ],
@@ -217,6 +250,6 @@ class _PostStatusPageState extends State<PostStatusPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

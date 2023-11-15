@@ -5,6 +5,7 @@ import 'package:jobhive/screens/SignupUserName.dart';
 import 'package:jobhive/screens/Signin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jobhive/repository/user_repository.dart';
+import 'package:jobhive/screens/auth_check_screen.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -98,6 +99,7 @@ class _SignUpState extends State<SignUp> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
+                         backgroundColor: Colors.black,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -133,7 +135,7 @@ class _SignUpState extends State<SignUp> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SignInScreen()),
+                              builder: (context) => const AuthCheckScreen()),
                         );
                       },
                   ),

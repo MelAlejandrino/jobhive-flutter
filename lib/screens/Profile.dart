@@ -17,7 +17,6 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    _loadImage();
   }
 
   Future<void> _loadImage() async {
@@ -49,6 +48,11 @@ class _ProfileState extends State<Profile> {
     print(userName);
     print(authProvider.user!.lastName);
 
+    if (userImage == null) {
+      _loadImage();
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -77,7 +81,7 @@ class _ProfileState extends State<Profile> {
                       'assets/jobhive.png',
                       width: 200,
                       height: 200,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     ),
             ),
             const SizedBox(height: 20),
