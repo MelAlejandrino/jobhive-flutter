@@ -13,6 +13,8 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  int regist = 0;
+  String? error;
   @override
   void dispose() {
     _usernameController.dispose();
@@ -35,7 +37,6 @@ class _SignUpState extends State<SignUp> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-
       if (userCredential.user != null) {
         firestoreUser.addUser(
           userCredential.user!.uid,
@@ -49,10 +50,13 @@ class _SignUpState extends State<SignUp> {
         );
       }
     } catch (e) {
+      regist = 1;
+      error = e.toString();
       print('Error during registration: ${e.toString()}');
     }
   }
-
+  //Global key for Form
+  final signup = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,21 +83,84 @@ class _SignUpState extends State<SignUp> {
                 color: const Color(0xff000000),
               ),
             ),
-            const SizedBox(height: 20),
-            TextFieldWidget(label: 'Username', controller: _usernameController),
-            const SizedBox(height: 10),
-            TextFieldWidget(label: 'Email', controller: _emailController),
-            const SizedBox(height: 10),
-            TextFieldWidget(
-                label: 'Password',
-                obscureText: true,
-                controller: _passwordController),
-            const SizedBox(height: 20),
+            //form for signup
+            Form(
+              key: signup,
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                      ),
+                      controller: _usernameController,
+                      //validator
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'This field must not be empty';
+                        }
+                        return null;
+                      }
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                      ),
+                      controller: _emailController,
+                      //validator
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'This field must not be empty';
+                        }
+                        return null;
+                      }
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                      ),
+                      obscureText: true,
+                      controller: _passwordController,
+                      //validator
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'This field must not be empty';
+                        }
+                        return null;
+                      }
+                  ),
+                  const SizedBox(height: 20),
+                ]
+              )
+            ),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  _registerUser(context);
+                  if (signup.currentState!.validate()) {
+                    _registerUser(context);
+                    if (regist == 1) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text("Error"),
+                          content: Text("An error has occurred during registration. $error"),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                              },
+                              child: const Text("okay"),
+                            ),
+                          ],
+                        ),
+                      );
+                      //sets value back to 0 for loop
+                      regist = 0;
+                    }
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
