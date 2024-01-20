@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jobhive/provider/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class SearchBar extends StatelessWidget implements PreferredSizeWidget {
   const SearchBar({Key? key}) : super(key: key);
@@ -8,6 +10,7 @@ class SearchBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 2.0,
@@ -68,9 +71,9 @@ class SearchBar extends StatelessWidget implements PreferredSizeWidget {
                 height: 33, // Match the height of the TextFormField
                 child: Center(
                   child: IconButton(
-                    icon: const Icon(Icons.mail, color: Colors.grey),
+                    icon: const Icon(Icons.logout, color: Colors.grey),
                     onPressed: () {
-                      // Add your mail icon onPressed action here
+                      authProvider.signOut();
                     },
                   ),
                 ),

@@ -228,8 +228,13 @@ class _HomeState extends State<Home> {
                         );
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
                       } else {
-                        return const CircularProgressIndicator();
+                        return Text(
+                          "",
+                        );
                       }
                     },
                   )),

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/auth_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:jobhive/component/SearchBar.dart' as custom_search;
+import 'package:jobhive/component/profile/posts.dart';
+import 'package:jobhive/component/profile/about.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -12,12 +15,9 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  late PageController _pageController;
+  int _currentIndex = 0;
   Uint8List? userImage;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<void> _loadImage() async {
     AuthProvider authProvider =
@@ -40,11 +40,29 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  final List<Widget> _screens = [
+    const ProfilePosts(),
+    const ProfileAbout(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
 
-    String userName = authProvider.user!.firstName + " " + authProvider.user!.lastName;
+    String userName =
+        authProvider.user!.firstName + " " + authProvider.user!.lastName;
     print(userName);
     print(authProvider.user!.lastName);
 
@@ -52,56 +70,64 @@ class _ProfileState extends State<Profile> {
       _loadImage();
     }
 
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-        actions: [
-          IconButton(
-            onPressed: () {
-              authProvider.signOut();
-            },
-            icon: Icon(Icons.logout),
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ClipOval(
-              child: userImage != null
-                  ? Image.memory(
-                      userImage!,
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.asset(
-                      'assets/jobhive.png',
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.contain,
+    return MaterialApp(
+        home: Scaffold(
+            appBar: custom_search.SearchBar() as PreferredSizeWidget?,
+            body: Container(
+                child: Column(
+              children: [
+                Row(
+                  children: [
+                    ClipOval(
+                      child: userImage != null
+                          ? Image.memory(
+                              userImage!,
+                              width: 150,
+                              height: 150,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              'assets/jobhive.png',
+                              width: 150,
+                              height: 150,
+                              fit: BoxFit.contain,
+                            ),
                     ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              userName,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                authProvider.signOut();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-              ),
-              child: const Text('Sign Out'),
-            ),
-          ],
-        ),
-      ),
-    );
+                    const SizedBox(height: 20),
+                    Text(
+                      userName,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                NavigationBar(
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  indicatorColor: Colors.amber,
+                  selectedIndex: _currentIndex,
+                  labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+                  destinations: const <Widget>[
+                    NavigationDestination(
+                      icon: Text('Posts'),
+                      label: 'Posts',
+                    ),
+                    NavigationDestination(
+                      icon: Text('About'),
+                      label: 'About',
+                    ),
+                  ],
+                ),
+                Flexible(
+                  child: IndexedStack(
+                    index: _currentIndex,
+                    children: _screens,
+                  ),
+                )
+              ],
+            ))));
   }
 }

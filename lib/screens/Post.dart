@@ -3,7 +3,6 @@ import 'package:jobhive/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jobhive/repository/post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -26,8 +25,6 @@ class _PostStatusPageState extends State<PostStatusPage> {
     statusController.dispose();
     super.dispose();
   }
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final PostRepository firestorePost = PostRepository();
 
   TextEditingController statusController = TextEditingController();

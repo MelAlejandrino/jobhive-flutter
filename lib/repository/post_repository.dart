@@ -21,8 +21,15 @@ class PostRepository {
   Stream<QuerySnapshot> getPosts(String authId) {
      final postStream = FirebaseFirestore.instance
       .collection('posts')
-      .where('user_uid', isNotEqualTo: authId)
       .where('privacy_status', isEqualTo: 'Public')
+      .snapshots();
+    return postStream;
+  }
+    Stream<QuerySnapshot> getFeed(String authId) {
+     final postStream = FirebaseFirestore.instance
+      .collection('posts')
+      .where('privacy_status', isEqualTo: 'Public')
+      .where('user_uid', isEqualTo: authId)
       .snapshots();
     return postStream;
   }
