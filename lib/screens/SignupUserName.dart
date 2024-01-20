@@ -4,6 +4,7 @@ import 'package:jobhive/screens/SignupPhoto.dart';
 import 'package:jobhive/repository/user_repository.dart';
 
 class NewUserName extends StatefulWidget {
+
   @override
   _NewUserNameState createState() => _NewUserNameState();
 }
@@ -14,7 +15,8 @@ class _NewUserNameState extends State<NewUserName> {
     _lastNameController.dispose();
     super.dispose();
   }
-
+  int error = 0;
+  String? errorms;
   final UserRepository firestoreUser = UserRepository();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -29,10 +31,11 @@ class _NewUserNameState extends State<NewUserName> {
             context, MaterialPageRoute(builder: (context) => NewUserPhoto()));
       }
     } catch (e) {
+      errorms = e.toString();
       print('Error during registration: ${e.toString()}');
     }
   }
-
+  final name = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     double baseWidth = 375;
@@ -104,20 +107,29 @@ class _NewUserNameState extends State<NewUserName> {
                         border: Border.all(color: const Color(0xff000000)),
                         color: const Color(0x00d9d9d9),
                       ),
-                      child: TextField(
-                        controller: _firstNameController,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12.0,
-                              horizontal:
-                                  16.0), // Adjust padding values as needed
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
+                      child: Form(
+                        key: name,
+                        child: TextFormField(
+                          controller: _firstNameController,
+                          validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'This field must not be empty';
+                              }
+                              return null;
+                            },
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 12.0,
+                                horizontal:
+                                16.0), // Adjust padding values as needed
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
                         ),
-                      ),
+                      )
                     ),
                   ],
                 ),
@@ -157,21 +169,30 @@ class _NewUserNameState extends State<NewUserName> {
                         border: Border.all(color: const Color(0xff000000)),
                         color: const Color(0x00d9d9d9),
                       ),
-                      child: TextField(
-                        controller: _lastNameController,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12.0,
-                              horizontal:
-                                  16.0), // Adjust padding values as needed
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
+                      child: Form(
+                        key: name,
+                        child: TextFormField(
+                          controller: _lastNameController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'This field must not be empty';
+                            }
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 12.0,
+                                horizontal:
+                                16.0), // Adjust padding values as needed
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -181,7 +202,27 @@ class _NewUserNameState extends State<NewUserName> {
                     EdgeInsets.fromLTRB(20 * fem, 0 * fem, 0 * fem, 0 * fem),
                 child: TextButton(
                   onPressed: () {
-                    _registerUser(context);
+                    if (name.currentState!.validate()) {
+                      _registerUser(context);
+                      if (error == 1) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text("Error"),
+                            content: Text("An error has occurred during registration. $errorms"),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                                child: const Text("okay"),
+                              ),
+                            ],
+                          ),
+                        );
+                        error = 0;
+                      }
+                    }
                   },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,

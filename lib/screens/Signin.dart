@@ -16,47 +16,57 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  //These two integers are for the error messages
+  int user = 0;
+  int pass = 0;
   Future<void> _loginUser(BuildContext context) async {
-  AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  try {
-    QuerySnapshot querySnapshot = await firestore
-        .collection('users')
-        .where('username', isEqualTo: _usernameController.text)
-        .limit(1)
-        .get();
+    try {
+      QuerySnapshot querySnapshot = await firestore
+          .collection('users')
+          .where('username', isEqualTo: _usernameController.text)
+          .limit(1)
+          .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      DocumentSnapshot userSnapshot = querySnapshot.docs.first;
-      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
-      String storedPassword = userData['password'];
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot userSnapshot = querySnapshot.docs.first;
+        Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+        String storedPassword = userData['password'];
+        //set user to 2. Meaning found username and the code will move on
+        user = 2;
 
-      if (storedPassword == _passwordController.text) {
-        authProvider.signIn(
-          userId: userData['uid'],
-          email: userData['email'],
-          firstName: userData['firstName'],
-          imageBytes: userData['imageLink'],
-          lastName: userData['lastName'],
-          password: storedPassword,
-          timestamp: userData['timestamp'].toDate(),
-          uid: userData['uid'],
-          username: userData['username'],
-        );
+        if (storedPassword == _passwordController.text) {
+          authProvider.signIn(
+            userId: userData['uid'],
+            email: userData['email'],
+            firstName: userData['firstName'],
+            imageBytes: userData['imageLink'],
+            lastName: userData['lastName'],
+            password: storedPassword,
+            timestamp: userData['timestamp'].toDate(),
+            uid: userData['uid'],
+            username: userData['username'],
+          );
+          //set pass to 2. Meaning correct password
+          pass = 2;
+        } else {
+          //set pass to 1. Meaning mismatched password
+          pass = 1;
+          print('Incorrect password');
+        }
       } else {
-        print('Incorrect password');
+        //set user to 1. Meaning invalid credentials.
+        user = 1;
+        print('Username not found');
       }
-    } else {
-      print('Username not found');
+    } catch (e) {
+      print("Error: $e");
     }
-  } catch (e) {
-    print("Error: $e");
   }
-}
-
-
+  //form key
+  final login = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,16 +91,89 @@ class _SignInScreenState extends State<SignInScreen> {
                   color: const Color(0xff000000),
                 ),
               ),
-              const SizedBox(height: 20),
-              TextFieldWidget(label: 'Username', controller: _usernameController),
-              const SizedBox(height: 10),
-              TextFieldWidget(label: 'Password', obscureText: true, controller: _passwordController),
-              const SizedBox(height: 20),
+              //form for validation on whether user inputs no items
+              Form(
+                key: login,
+                child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Username',
+                    ),
+                    controller: _usernameController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field must not be empty';
+                      }
+                      return null;
+                    }
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                      ),
+                      obscureText: true,
+                      controller: _passwordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'This field must not be empty';
+                        }
+                        return null;
+                      }
+                  ),
+                  const SizedBox(height: 20),
+                  ],
+                ),
+              ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    _loginUser(context);
+                    if (login.currentState!.validate()) {
+                      _loginUser(context);
+                      //checks if the Username is the cause of an error
+                      if (user == 1) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text("Invalid Credentials"),
+                            content: const Text("The inputted username is invalid."),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                                child: const Text("okay"),
+                              ),
+                            ],
+                          ),
+                        );
+                        //sets value back to 0 for loop
+                        user = 0;
+                      }
+                      //this time, if Password is mismatched
+                      else if (pass == 1) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text("Invalid Credentials"),
+                            content: const Text("The password inputted does not match."),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                                child: const Text("okay"),
+                              ),
+                            ],
+                          ),
+                        );
+                        //set pass to default value for the loop
+                        pass = 0;
+                      }
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
