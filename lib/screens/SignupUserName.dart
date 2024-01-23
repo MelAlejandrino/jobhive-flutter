@@ -35,7 +35,8 @@ class _NewUserNameState extends State<NewUserName> {
       print('Error during registration: ${e.toString()}');
     }
   }
-  final name = GlobalKey<FormState>();
+  final name1 = GlobalKey<FormState>();
+  final name2 = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     double baseWidth = 375;
@@ -108,7 +109,7 @@ class _NewUserNameState extends State<NewUserName> {
                         color: const Color(0x00d9d9d9),
                       ),
                       child: Form(
-                        key: name,
+                        key: name1,
                         child: TextFormField(
                           controller: _firstNameController,
                           validator: (value) {
@@ -170,7 +171,7 @@ class _NewUserNameState extends State<NewUserName> {
                         color: const Color(0x00d9d9d9),
                       ),
                       child: Form(
-                        key: name,
+                        key: name2,
                         child: TextFormField(
                           controller: _lastNameController,
                           validator: (value) {
@@ -202,7 +203,7 @@ class _NewUserNameState extends State<NewUserName> {
                     EdgeInsets.fromLTRB(20 * fem, 0 * fem, 0 * fem, 0 * fem),
                 child: TextButton(
                   onPressed: () {
-                    if (name.currentState!.validate()) {
+                    if (name1.currentState!.validate() && name2.currentState!.validate()) {
                       _registerUser(context);
                       if (error == 1) {
                         showDialog(
