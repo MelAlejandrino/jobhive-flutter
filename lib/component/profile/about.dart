@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:jobhive/provider/auth_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jobhive/component/profile/editAbout.dart';
 
 class ProfileAbout extends StatefulWidget {
   const ProfileAbout({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _ProfileAboutState extends State<ProfileAbout> {
         appBar: AppBar(
           title: Text('About Me'),
         ),
+
         body: FutureBuilder<DocumentSnapshot>(
           future: usersCollection.doc(userId).get(),
           builder: (context, snapshot) {
@@ -40,16 +42,31 @@ class _ProfileAboutState extends State<ProfileAbout> {
                 Map<String, dynamic> userData =
                 snapshot.data!.data() as Map<String, dynamic>;
 
-
-                String fullName =
-                    authProvider.user!.firstName + " " + authProvider.user!.lastName;
-
                 return Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(5.0),
+
                   child: ListView(
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              // Navigate to the EditProfileAbout page with the user ID
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditProfileAbout(userId: userId),
+                                ),
+                              );
+
+                            },
+                          ),
+                        ],
+                      ),
                       _buildAboutItem(
-                        icon: Icons.person,
+                        icon: Icons.verified_user_rounded,
                         title: 'Fullname',
                         content: userData['firstName'] +" "+ userData['lastName'] ?? '',
                       ),
