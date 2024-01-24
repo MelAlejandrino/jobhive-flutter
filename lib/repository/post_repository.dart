@@ -18,7 +18,7 @@ class PostRepository {
     });
   }
 
-  Stream<QuerySnapshot> getPosts(String authId) {
+  Stream<QuerySnapshot> getPosts(String authId, String searchText) {
      final postStream = FirebaseFirestore.instance
       .collection('posts')
       .where('privacy_status', isEqualTo: 'Public')

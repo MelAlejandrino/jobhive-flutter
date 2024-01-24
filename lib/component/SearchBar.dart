@@ -1,12 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:jobhive/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'search_by_audio.dart';
 
-class SearchBar extends StatelessWidget implements PreferredSizeWidget {
-  const SearchBar({Key? key}) : super(key: key);
+class SearchBar extends StatefulWidget implements PreferredSizeWidget {
+  const SearchBar({Key? key, required Null Function(dynamic text) onSearchTextChanged}) : super(key: key);
+
+  @override
+  _SearchBarState createState() => _SearchBarState();
 
   @override
   Size get preferredSize => const Size.fromHeight(80.0);
+}
+
+class _SearchBarState extends State<SearchBar> {
+  bool isSearchBarTapped = false;
+  late stt.SpeechToText _speech;
+  String _currentSpeech = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+  }
+
+  void _startListening() async {
+    if (await _speech.initialize()) {
+      _speech.listen(
+        onResult: (result) {
+          setState(() {
+            _currentSpeech = result.recognizedWords;
+          });
+        },
+      );
+    }
+  }
+
+  void _navigateToSecondScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SearchByAudio()),
+    );
+
+    if (result != null) {
+      setState(() {
+        _currentSpeech = result;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,23 +56,22 @@ class SearchBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 2.0,
-      title: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 23.0),
-              child: Container(
-                width: 135, // Adjust the width as needed
-                child: Image.asset('assets/jobhive.png'), // Asset path
-              ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 23.0),
+            child: Container(
+              width: 135,
+              child: Image.asset('assets/jobhive.png'),
             ),
-            const SizedBox(width: 16), // Adjust spacing
-            Padding(
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Padding(
               padding: const EdgeInsets.only(top: 23.0),
               child: Container(
                 height: 33,
-                width: 140, // Adjust the width as needed
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(50.0),
@@ -45,17 +86,19 @@ class SearchBar extends StatelessWidget implements PreferredSizeWidget {
                         color: Colors.grey,
                       ),
                     ),
-                    const SizedBox(width: 2), // Adjust spacing
+                    const SizedBox(width: 2),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 14),
-                        child: Center(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              hintText: 'Search for jobs',
-                              border: InputBorder.none,
-                            ),
-                          ),
+                      child: TextFormField(
+                        onTap: () {
+                          setState(() {
+                            isSearchBarTapped = true;
+                          });
+                        },
+                        controller: TextEditingController(text: _currentSpeech),
+                        decoration: const InputDecoration(
+                          hintText: 'Search for something',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(vertical: 8.0),
                         ),
                       ),
                     ),
@@ -63,24 +106,41 @@ class SearchBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 2), // Adjust spacing
-            Padding(
-              padding: const EdgeInsets.only(top: 14.0), // Adjust top padding
-              child: Container(
-                width: 50, // Adjust the width as needed
-                height: 33, // Match the height of the TextFormField
-                child: Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.logout, color: Colors.grey),
-                    onPressed: () {
-                      authProvider.signOut();
-                    },
-                  ),
+          ),
+          const SizedBox(width: 2),
+          Padding(
+            padding: const EdgeInsets.only(top: 14.0),
+            child: Container(
+              width: 50,
+              height: 33,
+              child: Center(
+                child: IconButton(
+                  icon: const Icon(Icons.mic, color: Colors.grey),
+                  onPressed: () {
+                    _startListening();
+                    _navigateToSecondScreen(); // Navigate to the second screen
+                  },
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 2),
+          Padding(
+            padding: const EdgeInsets.only(top: 14.0),
+            child: Container(
+              width: 50,
+              height: 33,
+              child: Center(
+                child: IconButton(
+                  icon: const Icon(Icons.logout, color: Colors.grey),
+                  onPressed: () {
+                    authProvider.signOut();
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

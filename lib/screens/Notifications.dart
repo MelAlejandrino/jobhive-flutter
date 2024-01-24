@@ -40,7 +40,7 @@ class _NotificationsState extends State<Notifications> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: custom_search.SearchBar() as PreferredSizeWidget?,
+        appBar: custom_search.SearchBar(onSearchTextChanged: (String ) {  },) as PreferredSizeWidget?,
         body: ListView.builder(
           itemCount: noTificate.length,
           itemBuilder: (context, index) {

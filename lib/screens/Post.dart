@@ -89,13 +89,13 @@ class _PostStatusPageState extends State<PostStatusPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1.0,
-        title: Text('Create Post', style: TextStyle(color: Colors.black)),
+        title: const Text('Create Post', style: TextStyle(color: Colors.black)),
         centerTitle: true,
         actions: <Widget>[
           Row(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
               ),
               Padding(
                 padding:
@@ -103,19 +103,19 @@ class _PostStatusPageState extends State<PostStatusPage> {
                 child: ElevatedButton(
                   onPressed: () {
                     _addPost(context);
-                  },
-                  child: Text('Post',
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.white)), // Adjust the font size
+                  }, // Adjust the font size
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.all(7.0)), // Adjust the padding
+                        const EdgeInsets.all(7.0)), // Adjust the padding
                     minimumSize: MaterialStateProperty.all<Size>(
-                        Size(60, 20)), // Set the minimum size
+                        const Size(60, 20)), // Set the minimum size
                     backgroundColor: MaterialStateProperty.all<Color>(
                         Colors.black), // Set the background color to blue
                   ),
+                  child: const Text('Post',
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white)),
                 ),
               ),
             ],
@@ -153,7 +153,7 @@ class _PostStatusPageState extends State<PostStatusPage> {
                                   fit: BoxFit.contain,
                                 ),
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -161,12 +161,12 @@ class _PostStatusPageState extends State<PostStatusPage> {
                               children: <Widget>[
                                 Text(
                                   userName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(width: 8.0),
+                                const SizedBox(width: 8.0),
                                 DropdownButton<String>(
                                   value: selectedPrivacyStatus,
                                   items: <String?>[
@@ -179,15 +179,15 @@ class _PostStatusPageState extends State<PostStatusPage> {
                                       child: Row(
                                         children: <Widget>[
                                           if (value == 'Public')
-                                            Icon(Icons.public,
+                                            const Icon(Icons.public,
                                                 color:
                                                     Colors.grey), // Public icon
                                           if (value == 'Friends')
-                                            Icon(Icons.group,
+                                            const Icon(Icons.group,
                                                 color: Colors
                                                     .grey), // Friends icon
                                           if (value == 'Only Me')
-                                            Icon(Icons.lock,
+                                            const Icon(Icons.lock,
                                                 color: Colors
                                                     .grey), // Only Me icon
                                         ],
@@ -206,36 +206,36 @@ class _PostStatusPageState extends State<PostStatusPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 50.0),
+                    const SizedBox(height: 50.0),
                     TextField(
                       controller: statusController,
                       decoration:
-                          InputDecoration(labelText: "Start typing ..."),
+                          const InputDecoration(labelText: "Start typing ..."),
                       maxLines: null,
                       keyboardType: TextInputType
                           .multiline,
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     Row(
                       children: <Widget>[
                         InkWell(
                           onTap: () {},
-                          child: Icon(Icons.image), // Icon 1
+                          child: const Icon(Icons.image), // Icon 1
                         ),
-                        SizedBox(width: 16.0), // Spacing
+                        const SizedBox(width: 16.0), // Spacing
                         InkWell(
                           onTap: () {},
-                          child: Icon(Icons.calendar_month), // Icon 2
+                          child: const Icon(Icons.calendar_month), // Icon 2
                         ),
-                        SizedBox(width: 16.0), // Spacing
+                        const SizedBox(width: 16.0), // Spacing
                         InkWell(
                           onTap: () {},
-                          child: Icon(Icons.leaderboard_rounded), // Icon 3
+                          child: const Icon(Icons.leaderboard_rounded), // Icon 3
                         ),
-                        SizedBox(width: 16.0), // Spacing
+                        const SizedBox(width: 16.0), // Spacing
                         InkWell(
                           onTap: () {},
-                          child: Icon(Icons.more_horiz), // Icon 4
+                          child: const Icon(Icons.more_horiz), // Icon 4
                         ),
                       ],
                     ),
@@ -243,7 +243,7 @@ class _PostStatusPageState extends State<PostStatusPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
           ],
         ),
       ),

@@ -72,7 +72,7 @@ class _ProfileState extends State<Profile> {
 
     return MaterialApp(
         home: Scaffold(
-            appBar: custom_search.SearchBar() as PreferredSizeWidget?,
+            appBar: custom_search.SearchBar(onSearchTextChanged: (String ) {  },) as PreferredSizeWidget?,
             body: Container(
                 child: Column(
               children: [
