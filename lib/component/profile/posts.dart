@@ -18,6 +18,19 @@ class ProfilePostsState extends State<ProfilePosts> {
   final PostRepository _postRepository = PostRepository();
   bool isExpanded = false;
 
+
+
+  final CollectionReference postsCollection =
+  FirebaseFirestore.instance.collection('posts');
+
+  Future<void> deletePost(String postId) async {
+    try {
+      await postsCollection.doc(postId).delete();
+    } catch (e) {
+      throw Exception('Error deleting post: $e');
+    }
+  }
+
   String getTimeDifference(Timestamp timestamp) {
     DateTime postTime = timestamp.toDate();
     DateTime currentTime = DateTime.now();
@@ -169,7 +182,7 @@ class ProfilePostsState extends State<ProfilePosts> {
                                     SizedBox(width: 12),
                                     privacyIcon(),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ],
@@ -203,6 +216,11 @@ class ProfilePostsState extends State<ProfilePosts> {
                             IconButton(
                               icon: Icon(Icons.thumb_down_alt),
                               onPressed: () {},
+                            ),
+                            Spacer(),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {deletePost(document.id);},
                             ),
                           ],
                         ),
