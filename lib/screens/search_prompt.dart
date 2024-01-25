@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jobhive/repository/post_repository.dart';
 import 'package:jobhive/component/SearchBar.dart' as custom_search;
+import 'package:jobhive/screens/Home.dart';
 import 'package:provider/provider.dart';
 import 'package:jobhive/provider/auth_provider.dart';
 import 'package:intl/intl.dart';
@@ -145,7 +146,11 @@ class _SearchPromptState extends State<SearchPrompt> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Home()),
+                        );
           },
         ),
       ),

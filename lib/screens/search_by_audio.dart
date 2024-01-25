@@ -30,7 +30,7 @@ class SpeechScreen extends StatefulWidget {
 class _SpeechScreenState extends State<SpeechScreen> {
   late stt.SpeechToText _speech;
   bool _isListening = true;
-  String _text = 'Press mic to start';
+  String _text = '';
 
   @override
   void initState() {
@@ -47,7 +47,13 @@ class _SpeechScreenState extends State<SpeechScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SearchPrompt(
+                        audioSearch: '',
+                      )),
+            );
           },
         ),
       ),
