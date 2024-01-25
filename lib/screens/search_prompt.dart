@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jobhive/repository/post_repository.dart';
 import 'package:jobhive/component/SearchBar.dart' as custom_search;
-import 'package:jobhive/screens/Home.dart';
 import 'package:provider/provider.dart';
 import 'package:jobhive/provider/auth_provider.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +21,8 @@ class _SearchPromptState extends State<SearchPrompt> {
   late TextEditingController controller;
   late FocusNode _focusNode;
   Map<String, bool> isExpandedMap = {};
+
+  String query = '';
 
   @override
   void initState() {
@@ -59,8 +60,6 @@ class _SearchPromptState extends State<SearchPrompt> {
       return '${difference.inDays}d';
     }
   }
-
-  String query = '';
 
   void onQueryChanged(String newQuery) {
     setState(() {
@@ -146,10 +145,7 @@ class _SearchPromptState extends State<SearchPrompt> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Home()),
-            );
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -169,8 +165,6 @@ class _SearchPromptState extends State<SearchPrompt> {
                         document.data() as Map<String, dynamic>;
                     String userPhoto =
                         data['user_photo'] ?? 'assets/jobhive.png';
-                    String postId = data['uid'];
-                    bool isExpanded = isExpandedMap[postId] ?? false;
 
                     Widget avatarWidget;
                     if (userPhoto.isNotEmpty) {
@@ -190,6 +184,9 @@ class _SearchPromptState extends State<SearchPrompt> {
                         ),
                       );
                     }
+
+                    String postId = data['uid'];
+                      bool isExpanded = isExpandedMap[postId] ?? false;
 
                     String userName = data['user_name'];
                     String postCaption = data['caption'];
@@ -245,13 +242,9 @@ class _SearchPromptState extends State<SearchPrompt> {
                     if (query.isNotEmpty) {
                       print(query);
                       final lowerCaseQuery = query.trim().toLowerCase();
-                      final lowerCaseCaption =
-                          data['caption'].trim().toLowerCase();
+                      final lowerCaseCaption = data['caption'].toLowerCase();
 
-                      final queryRegExp =
-                          RegExp(lowerCaseQuery, caseSensitive: false);
-
-                      if (queryRegExp.hasMatch(lowerCaseCaption)) {
+                      if (lowerCaseCaption.contains(lowerCaseQuery)) {
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           decoration: BoxDecoration(
@@ -344,6 +337,7 @@ class _SearchPromptState extends State<SearchPrompt> {
                         );
                       }
                     }
+                    return SizedBox.shrink();
                   },
                 );
               } else if (snapshot.hasError) {
