@@ -39,6 +39,7 @@ class _HomeState extends State<Home> {
       String username = authProvider.user!.username;
     }
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: custom_search.SearchBar() as PreferredSizeWidget?,
         body: Container(

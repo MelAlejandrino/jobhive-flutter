@@ -208,6 +208,7 @@ class _PostStatusPageState extends State<PostStatusPage> {
                     ),
                     const SizedBox(height: 50.0),
                     TextField(
+                      textInputAction: TextInputAction.done,
                       controller: statusController,
                       decoration:
                           const InputDecoration(labelText: "Start typing ..."),

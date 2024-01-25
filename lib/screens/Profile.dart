@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../provider/auth_provider.dart';
 import 'package:http/http.dart' as http;
+import '../provider/auth_provider.dart';
 import 'package:jobhive/component/SearchBar.dart' as custom_search;
 import 'package:jobhive/component/profile/posts.dart';
 import 'package:jobhive/component/profile/about.dart';
@@ -49,6 +49,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentIndex);
+    _loadImage();
   }
 
   @override
@@ -63,71 +64,60 @@ class _ProfileState extends State<Profile> {
 
     String userName =
         authProvider.user!.firstName + " " + authProvider.user!.lastName;
-    print(userName);
-    print(authProvider.user!.lastName);
-
-    if (userImage == null) {
-      _loadImage();
-    }
 
     return MaterialApp(
-        home: Scaffold(
-            appBar: custom_search.SearchBar() as PreferredSizeWidget?,
-            body: Container(
-                child: Column(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                CircleAvatar(
+                  radius: 75,
+                  backgroundImage: userImage != null
+                      ? MemoryImage(userImage!)
+                      : AssetImage('assets/jobhive.png') as ImageProvider,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  userName,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ClipOval(
-                      child: userImage != null
-                          ? Image.memory(
-                              userImage!,
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
-                              'assets/jobhive.png',
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.contain,
-                            ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle posts button press
+                        setState(() {
+                          _currentIndex = 0;
+                        });
+                      },
+                      child: Text('Posts'),
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      userName,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle about button press
+                        setState(() {
+                          _currentIndex = 1;
+                        });
+                      },
+                      child: Text('About'),
                     ),
                   ],
                 ),
-                NavigationBar(
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                  indicatorColor: Colors.amber,
-                  selectedIndex: _currentIndex,
-                  labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-                  destinations: const <Widget>[
-                    NavigationDestination(
-                      icon: Text('Posts'),
-                      label: 'Posts',
-                    ),
-                    NavigationDestination(
-                      icon: Text('About'),
-                      label: 'About',
-                    ),
-                  ],
+                const SizedBox(height: 20),
+                Expanded(
+                  child: _screens[_currentIndex],
                 ),
-                Flexible(
-                  child: IndexedStack(
-                    index: _currentIndex,
-                    children: _screens,
-                  ),
-                )
               ],
-            ))));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

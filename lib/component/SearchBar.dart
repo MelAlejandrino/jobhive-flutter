@@ -68,6 +68,7 @@ class _SearchBarState extends State<SearchBar> {
                               builder: (context) => const SearchPrompt(audioSearch: '',)),
                         ),
                         child: TextFormField(
+                          textInputAction: TextInputAction.search,
                           enabled: false, // Keep the field disabled
                           decoration: const InputDecoration(
                             hintText: 'Search for something',

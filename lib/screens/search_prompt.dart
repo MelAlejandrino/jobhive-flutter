@@ -107,6 +107,7 @@ class _SearchPromptState extends State<SearchPrompt> {
                               submitSearch();
                             }
                           },
+                          textInputAction: TextInputAction.search,
                           controller: controller,
                           decoration: const InputDecoration(
                             hintText: 'Search for something',

@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => AuthProvider(),
       child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: AuthCheckScreen(),
       ),
     );
