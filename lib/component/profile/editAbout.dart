@@ -19,7 +19,7 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
   TextEditingController locationController = TextEditingController();
 
   final CollectionReference usersCollection =
-  FirebaseFirestore.instance.collection('users');
+      FirebaseFirestore.instance.collection('users');
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
 
             if (snapshot.hasData) {
               Map<String, dynamic> userData =
-              snapshot.data!.data() as Map<String, dynamic>;
+                  snapshot.data!.data() as Map<String, dynamic>;
 
               // Initialize controller values with current user data
               fullNameController.text =
@@ -48,38 +48,40 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
 
               return Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    _buildEditItem(
-                      controller: fullNameController,
-                      title: 'Fullname',
-                      icon: Icons.verified_user_rounded,
-                    ),
-                    _buildEditItem(
-                      controller: usernameController,
-                      title: 'Username',
-                      icon: Icons.person,
-                    ),
-                    _buildEditItem(
-                      controller: emailController,
-                      title: 'Email',
-                      icon: Icons.email,
-                    ),
-                    _buildEditItem(
-                      controller: locationController,
-                      title: 'Location',
-                      icon: Icons.location_on,
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Save edited data to Firestore or perform other actions
-                        _saveEditedData();
-                        Navigator.pop(context); // Navigate back to the previous screen
-                      },
-                      child: Text('Save'),
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildEditItem(
+                        controller: fullNameController,
+                        title: 'Fullname',
+                        icon: Icons.verified_user_rounded,
+                      ),
+                      _buildEditItem(
+                        controller: usernameController,
+                        title: 'Username',
+                        icon: Icons.person,
+                      ),
+                      _buildEditItem(
+                        controller: emailController,
+                        title: 'Email',
+                        icon: Icons.email,
+                      ),
+                      _buildEditItem(
+                        controller: locationController,
+                        title: 'Location',
+                        icon: Icons.location_on,
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Save edited data to Firestore or perform other actions
+                          _saveEditedData();
+                          Navigator.pop(context); // Navigate back to the previous screen
+                        },
+                        child: Text('Save'),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -112,6 +114,7 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
                 ),
                 TextField(
                   controller: controller,
+                  maxLines: 1,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                   ),
@@ -126,13 +129,11 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
 
   void _saveEditedData() {
     // Implement logic to save edited data to Firestore or perform other actions
-    // For example:
     usersCollection.doc(widget.userId).update({
       'firstName': fullNameController.text.split(' ')[0],
       'lastName': fullNameController.text.split(' ')[1],
       'username': usernameController.text,
       'email': emailController.text,
-
     });
   }
 }
