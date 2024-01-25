@@ -18,10 +18,18 @@ class PostRepository {
     });
   }
 
-  Stream<QuerySnapshot> getPosts(String authId, String searchText) {
+  Stream<QuerySnapshot> getPosts() {
      final postStream = FirebaseFirestore.instance
       .collection('posts')
       .where('privacy_status', isEqualTo: 'Public')
+      .snapshots();
+    return postStream;
+  }
+
+  Stream<QuerySnapshot> getSearchPost(List<String> searchTextList) {
+     final postStream = FirebaseFirestore.instance
+      .collection('posts')
+      .where('caption', whereIn: searchTextList)
       .snapshots();
     return postStream;
   }

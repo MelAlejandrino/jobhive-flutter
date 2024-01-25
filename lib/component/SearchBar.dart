@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:jobhive/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'search_by_audio.dart';
+import '../screens/search_by_audio.dart';
+import 'package:jobhive/screens/search_prompt.dart';
 
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
-  const SearchBar({Key? key, required Null Function(dynamic text) onSearchTextChanged}) : super(key: key);
+  const SearchBar({Key? key}) : super(key: key);
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -16,38 +17,10 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _SearchBarState extends State<SearchBar> {
   bool isSearchBarTapped = false;
-  late stt.SpeechToText _speech;
-  String _currentSpeech = '';
 
   @override
   void initState() {
     super.initState();
-    _speech = stt.SpeechToText();
-  }
-
-  void _startListening() async {
-    if (await _speech.initialize()) {
-      _speech.listen(
-        onResult: (result) {
-          setState(() {
-            _currentSpeech = result.recognizedWords;
-          });
-        },
-      );
-    }
-  }
-
-  void _navigateToSecondScreen() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const SearchByAudio()),
-    );
-
-    if (result != null) {
-      setState(() {
-        _currentSpeech = result;
-      });
-    }
   }
 
   @override
@@ -88,38 +61,23 @@ class _SearchBarState extends State<SearchBar> {
                     ),
                     const SizedBox(width: 2),
                     Expanded(
-                      child: TextFormField(
-                        onTap: () {
-                          setState(() {
-                            isSearchBarTapped = true;
-                          });
-                        },
-                        controller: TextEditingController(text: _currentSpeech),
-                        decoration: const InputDecoration(
-                          hintText: 'Search for something',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SearchPrompt()),
+                        ),
+                        child: TextFormField(
+                          enabled: false, // Keep the field disabled
+                          decoration: const InputDecoration(
+                            hintText: 'Search for something',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+                          ),
                         ),
                       ),
                     ),
                   ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 2),
-          Padding(
-            padding: const EdgeInsets.only(top: 14.0),
-            child: Container(
-              width: 50,
-              height: 33,
-              child: Center(
-                child: IconButton(
-                  icon: const Icon(Icons.mic, color: Colors.grey),
-                  onPressed: () {
-                    _startListening();
-                    _navigateToSecondScreen(); // Navigate to the second screen
-                  },
                 ),
               ),
             ),

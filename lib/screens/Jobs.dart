@@ -57,7 +57,7 @@ class _JobsState extends State<Jobs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: custom_search.SearchBar(onSearchTextChanged: (text) {  },),
+      appBar: custom_search.SearchBar(),
       body: Column(
         children: [
           Row(

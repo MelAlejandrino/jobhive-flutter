@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final PostRepository _postRepository = PostRepository();
   bool isExpanded = false;
-  String searchText = '';
+    Map<String, bool> isExpandedMap = {};
 
   String getTimeDifference(Timestamp timestamp) {
     DateTime postTime = timestamp.toDate();
@@ -41,19 +41,13 @@ class _HomeState extends State<Home> {
     }
     return MaterialApp(
       home: Scaffold(
-        appBar: custom_search.SearchBar(
-          onSearchTextChanged: (text) {
-            setState(() {
-              searchText = text;
-            });
-          },
-        ),
+        appBar: custom_search.SearchBar() as PreferredSizeWidget?,
         body: Container(
           color: Colors.grey[200],
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: StreamBuilder<QuerySnapshot>(
-              stream: _postRepository.getPosts(authProvider.user!.uid, searchText),
+              stream: _postRepository.getPosts(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
@@ -61,6 +55,8 @@ class _HomeState extends State<Home> {
                     itemBuilder: (context, index) {
                       DocumentSnapshot document = snapshot.data!.docs[index];
                       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                      String postId = data['uid'];
+                      bool isExpanded = isExpandedMap[postId] ?? false;
 
                       String userPhoto = data['user_photo'] ?? 'assets/jobhive.png';
 
@@ -194,7 +190,7 @@ class _HomeState extends State<Home> {
                                 ? TextButton(
                               onPressed: () {
                                 setState(() {
-                                  isExpanded = !isExpanded;
+                                  isExpandedMap[postId] = !isExpanded;
                                 });
                               },
                               child: Text(

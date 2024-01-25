@@ -46,7 +46,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context, _text);
+            Navigator.of(context).pop();
           },
         ),
       ),
