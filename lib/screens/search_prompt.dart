@@ -7,6 +7,7 @@ import 'package:jobhive/provider/auth_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobhive/screens/search_by_audio.dart';
+import 'package:jobhive/screens/Home.dart';
 
 class SearchPrompt extends StatefulWidget {
   final String audioSearch;
@@ -145,7 +146,10 @@ class _SearchPromptState extends State<SearchPrompt> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Home()),
+            );
           },
         ),
       ),
@@ -186,7 +190,7 @@ class _SearchPromptState extends State<SearchPrompt> {
                     }
 
                     String postId = data['uid'];
-                      bool isExpanded = isExpandedMap[postId] ?? false;
+                    bool isExpanded = isExpandedMap[postId] ?? false;
 
                     String userName = data['user_name'];
                     String postCaption = data['caption'];
