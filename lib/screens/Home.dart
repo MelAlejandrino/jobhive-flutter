@@ -16,7 +16,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final PostRepository _postRepository = PostRepository();
-  bool isExpanded = false;
     Map<String, bool> isExpandedMap = {};
 
   String getTimeDifference(Timestamp timestamp) {

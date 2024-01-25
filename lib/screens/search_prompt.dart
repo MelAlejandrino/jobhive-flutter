@@ -21,7 +21,7 @@ class _SearchPromptState extends State<SearchPrompt> {
   final PostRepository _postRepository = PostRepository();
   late TextEditingController controller;
   late FocusNode _focusNode;
-  bool isExpanded = false;
+  Map<String, bool> isExpandedMap = {};
 
   @override
   void initState() {
@@ -147,10 +147,9 @@ class _SearchPromptState extends State<SearchPrompt> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Home()),
-                        );
+              context,
+              MaterialPageRoute(builder: (context) => const Home()),
+            );
           },
         ),
       ),
@@ -170,6 +169,8 @@ class _SearchPromptState extends State<SearchPrompt> {
                         document.data() as Map<String, dynamic>;
                     String userPhoto =
                         data['user_photo'] ?? 'assets/jobhive.png';
+                    String postId = data['uid'];
+                    bool isExpanded = isExpandedMap[postId] ?? false;
 
                     Widget avatarWidget;
                     if (userPhoto.isNotEmpty) {
@@ -244,9 +245,13 @@ class _SearchPromptState extends State<SearchPrompt> {
                     if (query.isNotEmpty) {
                       print(query);
                       final lowerCaseQuery = query.trim().toLowerCase();
-                      final lowerCaseCaption = data['caption'].toLowerCase();
+                      final lowerCaseCaption =
+                          data['caption'].trim().toLowerCase();
 
-                      if (lowerCaseCaption.contains(lowerCaseQuery)) {
+                      final queryRegExp =
+                          RegExp(lowerCaseQuery, caseSensitive: false);
+
+                      if (queryRegExp.hasMatch(lowerCaseCaption)) {
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           decoration: BoxDecoration(
@@ -308,7 +313,7 @@ class _SearchPromptState extends State<SearchPrompt> {
                                   ? TextButton(
                                       onPressed: () {
                                         setState(() {
-                                          isExpanded = !isExpanded;
+                                          isExpandedMap[postId] = !isExpanded;
                                         });
                                       },
                                       child: Text(
