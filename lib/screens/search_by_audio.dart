@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:avatar_glow/avatar_glow.dart';
 import 'dart:async';
+import 'package:jobhive/screens/search_prompt.dart';
 
 class SearchByAudio extends StatelessWidget {
   const SearchByAudio({Key? key});
@@ -107,7 +108,11 @@ class _SpeechScreenState extends State<SpeechScreen> {
 
   void _startTimer() {
     Timer(const Duration(seconds: 5), () {
-      Navigator.pop(context, _text);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SearchPrompt(audioSearch: _text)),
+      );
     });
   }
 }

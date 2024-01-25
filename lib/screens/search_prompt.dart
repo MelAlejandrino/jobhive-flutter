@@ -9,7 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jobhive/screens/search_by_audio.dart';
 
 class SearchPrompt extends StatefulWidget {
-  const SearchPrompt({super.key});
+  final String audioSearch;
+  const SearchPrompt({super.key, required this.audioSearch});
 
   @override
   State<SearchPrompt> createState() => _SearchPromptState();
@@ -24,8 +25,12 @@ class _SearchPromptState extends State<SearchPrompt> {
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController();
     _focusNode = FocusNode();
+    controller = TextEditingController(
+        text: widget.audioSearch.isNotEmpty ? widget.audioSearch : '');
+    if (widget.audioSearch.isNotEmpty) {
+      submitSearch();
+    }
   }
 
   @override
@@ -35,11 +40,9 @@ class _SearchPromptState extends State<SearchPrompt> {
     super.dispose();
   }
 
-  void _navigateToSecondScreen() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const SearchByAudio()),
-    );
+  void submitSearch() {
+    _focusNode.unfocus();
+    onQueryChanged(controller.text);
   }
 
   String getTimeDifference(Timestamp timestamp) {
@@ -98,7 +101,11 @@ class _SearchPromptState extends State<SearchPrompt> {
                             _focusNode.unfocus();
                             onQueryChanged(query);
                           },
-                          onEditingComplete: () {},
+                          onEditingComplete: () {
+                            if (widget.audioSearch.isNotEmpty) {
+                              submitSearch();
+                            }
+                          },
                           controller: controller,
                           decoration: const InputDecoration(
                             hintText: 'Search for something',
@@ -122,7 +129,11 @@ class _SearchPromptState extends State<SearchPrompt> {
                   child: IconButton(
                     icon: const Icon(Icons.mic, color: Colors.grey),
                     onPressed: () {
-                      _navigateToSecondScreen();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SearchByAudio()),
+                      );
                     },
                   ),
                 ),
@@ -149,7 +160,6 @@ class _SearchPromptState extends State<SearchPrompt> {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
-  
                     DocumentSnapshot document = snapshot.data!.docs[index];
                     Map<String, dynamic> data =
                         document.data() as Map<String, dynamic>;
@@ -227,9 +237,11 @@ class _SearchPromptState extends State<SearchPrompt> {
 
                     String timeDifference = getTimeDifference(timestamp);
                     if (query.isNotEmpty) {
-                      if (data['caption']
-                          .toLowerCase()
-                          .contains(query.trim().toLowerCase())) {
+                      print(query);
+                      final lowerCaseQuery = query.trim().toLowerCase();
+                      final lowerCaseCaption = data['caption'].toLowerCase();
+
+                      if (lowerCaseCaption.contains(lowerCaseQuery)) {
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           decoration: BoxDecoration(

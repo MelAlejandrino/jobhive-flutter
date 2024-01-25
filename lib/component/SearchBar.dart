@@ -65,7 +65,7 @@ class _SearchBarState extends State<SearchBar> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SearchPrompt()),
+                              builder: (context) => const SearchPrompt(audioSearch: '',)),
                         ),
                         child: TextFormField(
                           enabled: false, // Keep the field disabled

@@ -54,6 +54,7 @@ class _HomeState extends State<Home> {
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
                       DocumentSnapshot document = snapshot.data!.docs[index];
+          
                       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
                       String postId = data['uid'];
                       bool isExpanded = isExpandedMap[postId] ?? false;
