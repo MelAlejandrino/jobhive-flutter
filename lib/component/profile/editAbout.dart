@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
-import 'package:jobhive/provider/auth_provider.dart';
 
 class EditProfileAbout extends StatefulWidget {
   final String userId;
@@ -19,7 +17,9 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
   TextEditingController locationController = TextEditingController();
 
   final CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection('users');
+  FirebaseFirestore.instance.collection('users');
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +37,8 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
 
             if (snapshot.hasData) {
               Map<String, dynamic> userData =
-                  snapshot.data!.data() as Map<String, dynamic>;
+              snapshot.data!.data() as Map<String, dynamic>;
 
-              // Initialize controller values with current user data
               fullNameController.text =
                   userData['firstName'] + " " + userData['lastName'] ?? '';
               usernameController.text = userData['username'] ?? '';
@@ -49,39 +48,71 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildEditItem(
-                        controller: fullNameController,
-                        title: 'Fullname',
-                        icon: Icons.verified_user_rounded,
-                      ),
-                      _buildEditItem(
-                        controller: usernameController,
-                        title: 'Username',
-                        icon: Icons.person,
-                      ),
-                      _buildEditItem(
-                        controller: emailController,
-                        title: 'Email',
-                        icon: Icons.email,
-                      ),
-                      _buildEditItem(
-                        controller: locationController,
-                        title: 'Location',
-                        icon: Icons.location_on,
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Save edited data to Firestore or perform other actions
-                          _saveEditedData();
-                          Navigator.pop(
-                              context); // Navigate back to the previous screen
-                        },
-                        child: Text('Save'),
-                      ),
-                    ],
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        _buildEditItem(
+                          controller: fullNameController,
+                          title: 'Fullname',
+                          icon: Icons.verified_user_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Fullname must not be empty';
+                            }
+                            return null;
+                          },
+                        ),
+                        _buildEditItem(
+                          controller: usernameController,
+                          title: 'Username',
+                          icon: Icons.person,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Username must not be empty';
+                            }
+                            return null;
+                          },
+                        ),
+                        _buildEditItem(
+                          controller: emailController,
+                          title: 'Email',
+                          icon: Icons.email,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Email must not be empty';
+                            }
+                            if (!RegExp(
+                                r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                                .hasMatch(value)) {
+                              return 'Enter a valid email address';
+                            }
+                            return null;
+                          },
+                        ),
+                        _buildEditItem(
+                          controller: locationController,
+                          title: 'Location',
+                          icon: Icons.location_on,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Location must not be empty';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _saveEditedData();
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Text('Save'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -98,6 +129,7 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
     required TextEditingController controller,
     required IconData icon,
     required String title,
+    String? Function(String?)? validator,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -113,12 +145,13 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
                   title,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                TextField(
+                TextFormField(
                   controller: controller,
                   maxLines: 1,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                   ),
+                  validator: validator,
                 ),
               ],
             ),
@@ -129,7 +162,6 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
   }
 
   void _saveEditedData() {
-    // Implement logic to save edited data to Firestore or perform other actions
     usersCollection.doc(widget.userId).update({
       'firstName': fullNameController.text.split(' ')[0],
       'lastName': fullNameController.text.split(' ')[1],
