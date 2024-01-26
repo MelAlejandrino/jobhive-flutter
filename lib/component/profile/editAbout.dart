@@ -76,7 +76,8 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
                         onPressed: () {
                           // Save edited data to Firestore or perform other actions
                           _saveEditedData();
-                          Navigator.pop(context); // Navigate back to the previous screen
+                          Navigator.pop(
+                              context); // Navigate back to the previous screen
                         },
                         child: Text('Save'),
                       ),
@@ -134,6 +135,7 @@ class _EditProfileAboutState extends State<EditProfileAbout> {
       'lastName': fullNameController.text.split(' ')[1],
       'username': usernameController.text,
       'email': emailController.text,
+      'location': locationController.text
     });
   }
 }

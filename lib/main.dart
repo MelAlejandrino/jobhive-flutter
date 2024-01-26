@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jobhive/firebase_options.dart';
 import 'provider/auth_provider.dart';
@@ -8,18 +9,20 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+    return ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(), // Use SplashScreen as the initial screen
+      ),
     );
   }
 }
@@ -33,20 +36,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Delay for 3.1 seconds to simulate your splash screen duration
-    Future.delayed(const Duration(seconds: 2, milliseconds: 300), () {
+    // Add a delay to simulate a 3-second splash screen
+    Timer(Duration(seconds: 3), () {
+      // Navigate to the main screen after the splash screen
       Navigator.pushReplacement(
         context,
-        PageRouteBuilder(
-          pageBuilder: (_, __, ___) => ChangeNotifierProvider(
-            create: (context) => AuthProvider(),
-            child: const AuthCheckScreen(),
-          ),
-          transitionsBuilder: (_, animation, __, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: const Duration(milliseconds: 1000),
-        ),
+        MaterialPageRoute(builder: (context) => AuthCheckScreen()),
       );
     });
   }
@@ -54,17 +49,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/jobhive.png',
-              width: 200.0,
-              height: 200.0,
+        child: FadeTransition(
+          opacity: Tween<double>(begin: 0, end: 1).animate(
+            CurvedAnimation(
+              curve: Curves.easeInOut,
+              parent: ModalRoute.of(context)!.animation!,
             ),
-          ],
+          ),
+          child: Image.asset('assets/jobhive.png',
+          width: 200.0,
+          height: 200.0,
+          ), // Change the path accordingly
         ),
       ),
     );
