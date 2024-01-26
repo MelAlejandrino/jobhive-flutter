@@ -29,11 +29,11 @@ class _ProfileAboutState extends State<ProfileAbout> {
         appBar: AppBar(
           title: Text('About Me'),
         ),
-
-        body: FutureBuilder<DocumentSnapshot>(
-          future: usersCollection.doc(userId).get(),
+        body: StreamBuilder<DocumentSnapshot>(
+          stream: usersCollection.doc(userId).snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.connectionState == ConnectionState.active ||
+                snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
@@ -44,7 +44,6 @@ class _ProfileAboutState extends State<ProfileAbout> {
 
                 return Padding(
                   padding: const EdgeInsets.all(5.0),
-
                   child: ListView(
                     children: [
                       Row(
@@ -53,14 +52,13 @@ class _ProfileAboutState extends State<ProfileAbout> {
                           IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () {
-                              // Navigate to the EditProfileAbout page with the user ID
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => EditProfileAbout(userId: userId),
+                                  builder: (context) =>
+                                      EditProfileAbout(userId: userId),
                                 ),
                               );
-
                             },
                           ),
                         ],
@@ -68,7 +66,8 @@ class _ProfileAboutState extends State<ProfileAbout> {
                       _buildAboutItem(
                         icon: Icons.verified_user_rounded,
                         title: 'Fullname',
-                        content: userData['firstName'] +" "+ userData['lastName'] ?? '',
+                        content:
+                        userData['firstName'] + " " + userData['lastName'] ?? '',
                       ),
                       _buildAboutItem(
                         icon: Icons.person,
@@ -85,7 +84,6 @@ class _ProfileAboutState extends State<ProfileAbout> {
                         title: 'Location',
                         content: userData['location'] ?? '',
                       ),
-                      // Add more items as needed based on your user data
                     ],
                   ),
                 );
@@ -98,7 +96,6 @@ class _ProfileAboutState extends State<ProfileAbout> {
       );
     }
 
-    // Handle the case when the user is null
     return Scaffold(
       body: Center(
         child: Text('User not found'),
