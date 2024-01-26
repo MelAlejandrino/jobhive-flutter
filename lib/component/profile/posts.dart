@@ -18,8 +18,6 @@ class ProfilePostsState extends State<ProfilePosts> {
   final PostRepository _postRepository = PostRepository();
   bool isExpanded = false;
 
-
-
   final CollectionReference postsCollection =
   FirebaseFirestore.instance.collection('posts');
 
@@ -52,193 +50,223 @@ class ProfilePostsState extends State<ProfilePosts> {
       String username = authProvider.user!.username;
     }
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: _postRepository.getFeed(authProvider.user!.uid),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot document = snapshot.data!.docs[index];
-                  Map<String, dynamic> data =
-                      document.data() as Map<String, dynamic>;
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: _postRepository.getFeed(authProvider.user!.uid),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot document = snapshot.data!.docs[index];
+                Map<String, dynamic> data =
+                document.data() as Map<String, dynamic>;
 
-                  String userPhoto = data['user_photo'] ?? 'assets/jobhive.png';
+                String userPhoto = data['user_photo'] ?? 'assets/jobhive.png';
 
-                  Widget avatarWidget;
-                  if (userPhoto.isNotEmpty) {
-                    avatarWidget = CircleAvatar(
-                      backgroundImage: NetworkImage(userPhoto),
-                    );
-                  } else {
-                    avatarWidget = CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: SizedBox(
-                        width: 64.0,
-                        height: 64.0,
-                        child: Image.asset(
-                          'assets/jobhive.png',
-                          fit: BoxFit.contain,
-                        ),
+                Widget avatarWidget;
+                if (userPhoto.isNotEmpty) {
+                  avatarWidget = CircleAvatar(
+                    backgroundImage: NetworkImage(userPhoto),
+                  );
+                } else {
+                  avatarWidget = CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    child: SizedBox(
+                      width: 64.0,
+                      height: 64.0,
+                      child: Image.asset(
+                        'assets/jobhive.png',
+                        fit: BoxFit.contain,
                       ),
-                    );
-                  }
-                  String userName = data['user_name'];
-                  String postCaption = data['caption'];
-                  Widget captionWidget = isExpanded
-                      ? Text(
-                          postCaption,
-                          style: GoogleFonts.inter(
-                            fontSize: 16.0,
-                            color: const Color.fromARGB(255, 99, 99, 99),
-                          ),
-                        )
-                      : Text(
-                          postCaption.length > 200
-                              ? postCaption.substring(0, 200) + "..."
-                              : postCaption,
-                          style: GoogleFonts.inter(
-                            fontSize: 16.0,
-                            color: const Color.fromARGB(255, 99, 99, 99),
-                          ),
-                        );
-
-                  Timestamp timestamp = data['timestamp'];
-                  String privacy_status = data['privacy_status'];
-                  Widget privacyIcon() {
-                    IconData icon;
-                    double iconSize = 18.0;
-
-                    switch (privacy_status) {
-                      case 'Public':
-                        icon = Icons.public;
-                        break;
-                      case 'Friends':
-                        icon = Icons.group;
-                        break;
-                      case 'Only Me':
-                        icon = Icons.lock;
-                        break;
-                      default:
-                        icon = Icons.info;
-                        break;
-                    }
-
-                    return Icon(
-                      icon,
-                      color: Color.fromARGB(98, 0, 0, 0),
-                      size: iconSize,
-                    );
-                  }
-
-                  String timeDifference = getTimeDifference(timestamp);
-
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(
-                        color: Color.fromARGB(255, 114, 114, 114),
-                        width: 1.0,
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: 64.0,
-                              height: 64.0,
-                              child: avatarWidget,
-                            ),
-                            SizedBox(width: 16.0),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  userName,
-                                  style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0,
-                                  ),
-                                ),
-                                SizedBox(height: 4.0),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      timeDifference,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    SizedBox(width: 12),
-                                    privacyIcon(),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8.0),
-                        captionWidget,
-                        postCaption.length > 200
-                            ? TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isExpanded = !isExpanded;
-                                  });
-                                },
-                                child: Text(
-                                  isExpanded ? 'See Less' : 'See More',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            : SizedBox.shrink(),
-                        const SizedBox(height: 8.0),
-                        Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.thumb_up_alt),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.thumb_down_alt),
-                              onPressed: () {},
-                            ),
-                            Spacer(),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {deletePost(document.id);},
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
                   );
-                },
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return Text(
-                "",
-              );
-            }
-          },
-        ));
+                }
+                String userName = data['user_name'];
+                String postCaption = data['caption'];
+                Widget captionWidget = isExpanded
+                    ? Text(
+                  postCaption,
+                  style: GoogleFonts.inter(
+                    fontSize: 16.0,
+                    color: const Color.fromARGB(255, 99, 99, 99),
+                  ),
+                )
+                    : Text(
+                  postCaption.length > 200
+                      ? postCaption.substring(0, 200) + "..."
+                      : postCaption,
+                  style: GoogleFonts.inter(
+                    fontSize: 16.0,
+                    color: const Color.fromARGB(255, 99, 99, 99),
+                  ),
+                );
+
+                Timestamp timestamp = data['timestamp'];
+                String privacy_status = data['privacy_status'];
+                Widget privacyIcon() {
+                  IconData icon;
+                  double iconSize = 18.0;
+
+                  switch (privacy_status) {
+                    case 'Public':
+                      icon = Icons.public;
+                      break;
+                    case 'Friends':
+                      icon = Icons.group;
+                      break;
+                    case 'Only Me':
+                      icon = Icons.lock;
+                      break;
+                    default:
+                      icon = Icons.info;
+                      break;
+                  }
+
+                  return Icon(
+                    icon,
+                    color: Color.fromARGB(98, 0, 0, 0),
+                    size: iconSize,
+                  );
+                }
+
+                String timeDifference = getTimeDifference(timestamp);
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(
+                      color: Color.fromARGB(255, 114, 114, 114),
+                      width: 1.0,
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            width: 64.0,
+                            height: 64.0,
+                            child: avatarWidget,
+                          ),
+                          SizedBox(width: 16.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userName,
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                              SizedBox(height: 4.0),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    timeDifference,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  privacyIcon(),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8.0),
+                      captionWidget,
+                      postCaption.length > 200
+                          ? TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isExpanded = !isExpanded;
+                          });
+                        },
+                        child: Text(
+                          isExpanded ? 'See Less' : 'See More',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                          : SizedBox.shrink(),
+                      const SizedBox(height: 8.0),
+                      Flex(
+                        direction: Axis.horizontal,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.thumb_up_alt),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.thumb_down_alt),
+                            onPressed: () {},
+                          ),
+                          Spacer(),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              _showDeleteConfirmationDialog(document.id);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return Text(
+              "",
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> _showDeleteConfirmationDialog(String postId) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Post'),
+          content: Text('Are you sure you want to delete this post?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                deletePost(postId);
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
